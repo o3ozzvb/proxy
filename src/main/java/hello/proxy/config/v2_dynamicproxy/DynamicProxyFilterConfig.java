@@ -2,12 +2,16 @@ package hello.proxy.config.v2_dynamicproxy;
 
 import hello.proxy.app.v1.*;
 import hello.proxy.config.v2_dynamicproxy.handler.LogTraceBasicHandler;
+import hello.proxy.config.v2_dynamicproxy.handler.LogTraceFilterHandler;
 import hello.proxy.trace.logtrace.LogTrace;
 import org.springframework.context.annotation.Bean;
 
 import java.lang.reflect.Proxy;
 
-public class DynamicProxyBasicConfig {
+public class DynamicProxyFilterConfig {
+
+    private static final String[] PATTERNS = {"request", "order*", "save*"};
+
 
     @Bean
     public OrderControllerV1 orderControllerV1(LogTrace logTrace) {
@@ -15,7 +19,7 @@ public class DynamicProxyBasicConfig {
 
         OrderControllerV1 proxy = (OrderControllerV1) Proxy.newProxyInstance(OrderControllerV1.class.getClassLoader(),
                 new Class[]{OrderControllerV1.class},
-                new LogTraceBasicHandler(orderControllerV1, logTrace));
+                new LogTraceFilterHandler(orderControllerV1, logTrace, PATTERNS));
 
         return proxy;
     }
@@ -26,7 +30,7 @@ public class DynamicProxyBasicConfig {
 
         OrderServiceV1 proxy = (OrderServiceV1) Proxy.newProxyInstance(OrderServiceV1.class.getClassLoader(),
                 new Class[]{OrderServiceV1.class},
-                new LogTraceBasicHandler(orderServiceV1, logTrace));
+                new LogTraceFilterHandler(orderServiceV1, logTrace, PATTERNS));
 
         return proxy;
     }
@@ -37,7 +41,7 @@ public class DynamicProxyBasicConfig {
 
         OrderRespositoryV1 proxy = (OrderRespositoryV1) Proxy.newProxyInstance(OrderRespositoryV1.class.getClassLoader(),
                 new Class[]{OrderRespositoryV1.class},
-                new LogTraceBasicHandler(orderRespository, logTrace));
+                new LogTraceFilterHandler(orderRespository, logTrace, PATTERNS));
 
         return proxy;
     }
